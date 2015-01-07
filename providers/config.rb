@@ -32,6 +32,7 @@ action :config do
     shell_out!(cmd, :returns => @new_resource.returns)
   rescue Mixlib::ShellOut::ShellCommandFailed => e
     Chef::Log.info "This entry likely already exists: #{e.class} #{@new_resource.cfg_cmd}"
+    Chef::Log.info 'Ignoring for idempotence and continuing with the chef run'
   end
   Chef::Log.info("IIS Config command run")
 end
