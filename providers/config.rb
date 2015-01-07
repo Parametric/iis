@@ -1,6 +1,7 @@
 #
 # Author:: Kendrick Martin (kendrick.martin@webtrends.com)
 # Contributor:: David Dvorak (david.dvorak@webtrends.com)
+# Contributor:: Branden Tanga (btanga@paraport.com)
 # Cookbook Name:: iis
 # Resource:: config
 #
@@ -27,7 +28,11 @@ include Windows::Helper
 action :config do
   cmd = "#{appcmd} set config #{@new_resource.cfg_cmd}"
   Chef::Log.debug(cmd)
-  shell_out!(cmd, :returns => @new_resource.returns)
+  begin
+    shell_out!(cmd, :returns => @new_resource.returns)
+  rescue Mixlib::ShellOut::ShellCommandFailed => e
+    Chef::Log.info "This entry likely already exists: #{e.class} #{@new_resource.cfg_cmd}"
+  end
   Chef::Log.info("IIS Config command run")
 end
 
